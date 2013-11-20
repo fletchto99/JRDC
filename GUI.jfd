@@ -1,0 +1,241 @@
+JFDML JFormDesigner: "5.2.0.0.25" Java: "1.7.0_07" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) {
+			"autoSize": false
+		} ) {
+			name: "this"
+			"$sizePolicy": 1
+			"resizable": false
+			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
+				name: "tabbedPane1"
+				auxiliary() {
+					"JavaCodeGenerator.variableName": "tabbedPane"
+				}
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) {
+					"autoSize": false
+				} ) {
+					name: "panel1"
+					auxiliary() {
+						"JavaCodeGenerator.variableName": "mainPanel"
+					}
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "button5"
+						"text": "Start Server"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "startButton"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 210
+						"y": 10
+						"width": 115
+						"height": 40
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "button6"
+						"text": "Connect"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "connectButton"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 210
+						"y": 90
+						"width": 115
+						"height": 40
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "button7"
+						"text": "Exit"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "exitButton"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 210
+						"y": 170
+						"width": 115
+						"height": 40
+					} )
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "scrollPane2"
+						add( new FormComponent( "javax.swing.JTextPane" ) {
+							name: "textPane2"
+							auxiliary() {
+								"JavaCodeGenerator.variableName": "statusArea"
+							}
+						} )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 5
+						"y": 5
+						"width": 195
+						"height": 215
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "Main"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) {
+					"autoSize": false
+				} ) {
+					name: "panel3"
+					auxiliary() {
+						"JavaCodeGenerator.variableName": "connectPanel"
+					}
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "button1"
+						"text": "Kick"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "kickButton"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 215
+						"y": 10
+						"width": 110
+						"height": 35
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "button2"
+						"text": "Information"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "informationButton"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 215
+						"y": 70
+						"width": 110
+						"height": 35
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "button3"
+						"text": "Refresh"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "refreshButton"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 215
+						"y": 125
+						"width": 110
+						"height": 35
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "button4"
+						"text": "Kick All"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "kickAllButton"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 215
+						"y": 180
+						"width": 110
+						"height": 35
+					} )
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "scrollPane3"
+						add( new FormComponent( "javax.swing.JList" ) {
+							name: "list1"
+							auxiliary() {
+								"JavaCodeGenerator.variableName": "connectionsList"
+							}
+						} )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 5
+						"y": 5
+						"width": 195
+						"height": 215
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "Connections"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) {
+					"autoSize": false
+				} ) {
+					name: "panel2"
+					auxiliary() {
+						"JavaCodeGenerator.variableName": "settingsPanel"
+					}
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textField1"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "usernameBox"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 100
+						"y": 60
+						"width": 225
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label1"
+						"text": "Username:"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "usernameLabel"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 15
+						"y": 60
+						"height": 20
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label2"
+						"text": "Password:"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "passwordLabel"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 15
+						"y": 100
+						"height": 20
+					} )
+					add( new FormComponent( "javax.swing.JPasswordField" ) {
+						name: "passwordField1"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "passwordBox"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 100
+						"y": 100
+						"width": 225
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label3"
+						"text": "Authentication"
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 1, 10, false )
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "authLabel"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 80
+						"y": 10
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label4"
+						"text": "Port:"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "portLabel"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 35
+						"y": 140
+						"height": 20
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textField2"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+						"x": 100
+						"y": 140
+						"width": 225
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "Settings"
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 0
+				"y": 0
+				"width": 350
+				"height": 260
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 355, 285 )
+		} )
+	}
+}

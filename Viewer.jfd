@@ -1,0 +1,138 @@
+JFDML JFormDesigner: "5.2.0.0.25" Java: "1.7.0_07" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) {
+			"autoSize": false
+		} ) {
+			name: "this"
+			"$sizePolicy": 1
+			menuBar: new FormContainer( "javax.swing.JMenuBar", new FormLayoutManager( class javax.swing.JMenuBar ) ) {
+				name: "menuBar1"
+				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+					name: "menu1"
+					"text": "File"
+					auxiliary() {
+						"JavaCodeGenerator.variableName": "fileMenu"
+					}
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuItem1"
+						"text": "Exit"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "exitButton"
+						}
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+					name: "menu2"
+					"text": "Quality"
+					auxiliary() {
+						"JavaCodeGenerator.variableName": "qualityMenu"
+					}
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuItem2"
+						"text": "Highest"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "highestButton"
+						}
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuItem3"
+						"text": "High"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "highButton"
+						}
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuItem4"
+						"text": "Medium"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "mediumButton"
+						}
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuItem5"
+						"text": "Low"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "lowButton"
+						}
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+					name: "menu4"
+					"text": "Toggles"
+					auxiliary() {
+						"JavaCodeGenerator.variableName": "togglesMenu"
+					}
+					add( new FormComponent( "javax.swing.JCheckBoxMenuItem" ) {
+						name: "checkBoxMenuItem1"
+						"text": "Fullscreen"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "fullscreenToggle"
+						}
+					} )
+					add( new FormComponent( "javax.swing.JCheckBoxMenuItem" ) {
+						name: "checkBoxMenuItem2"
+						"text": "Remote Control"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "controlToggle"
+						}
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+					name: "menu5"
+					"text": "Refresh Rate"
+					auxiliary() {
+						"JavaCodeGenerator.variableName": "refreshMenu"
+					}
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuItem10"
+						"text": "0 ms"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "fastestButton"
+						}
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuItem9"
+						"text": "250 ms"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "fastButton"
+						}
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuItem8"
+						"text": "500 ms"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "normalButton"
+						}
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuItem7"
+						"text": "1 s"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "slowButton"
+						}
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+					name: "menu3"
+					"text": "Help"
+					auxiliary() {
+						"JavaCodeGenerator.variableName": "helpMenu"
+					}
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuItem6"
+						"text": "Session Information"
+						auxiliary() {
+							"JavaCodeGenerator.variableName": "sessionButton"
+						}
+					} )
+				} )
+			}
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 925, 680 )
+		} )
+	}
+}
