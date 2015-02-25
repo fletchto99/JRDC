@@ -1,9 +1,10 @@
 package me.matt.jrdc.utilities;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
 import java.io.Serializable;
 import java.util.Hashtable;
+
+import javax.swing.JOptionPane;
 
 public class ConnectionProperties implements Serializable {
 
@@ -29,26 +30,33 @@ public class ConnectionProperties implements Serializable {
         transferSpeed = 0;
     }
 
-    public void incSentData(final long size) {
-        sentData += size;
-    }
-
-    public void incReceivedData(final long size) {
-        receivedData += size;
-    }
-
     /**
-     * update the information
+     * Display the connection properties
      */
-    private void refresh() {
-        duration = previous + System.currentTimeMillis() - startedAt;
-        dataSize = sentData + receivedData;
-        transferSpeed = dataSize * 1000 / duration;
+    public void display() {
+        this.refresh();
+        final Dimension size = (Dimension) properties.get("screen.size");
+        JOptionPane.showMessageDialog(
+                null,
+                "Host: \t" + properties.get("host-address") + "\n" +
+
+                "OS: \t" + properties.get("os") + "\n" +
+
+                "User's name: \t" + properties.get("user.name") + "\n" +
+
+                "Screen resolution: \t" + String.valueOf(size.width) + "x"
+                        + String.valueOf(size.height) + "\n" + "Duration: \t"
+                        + this.getDuration() + "\n\n" + "Sent data: \t"
+                        + this.getSize(sentData) + "\n" + "Received data: \t"
+                        + this.getSize(receivedData) + "\n\n"
+                        + "Total data size: \t" + this.getSize(dataSize) + "\n"
+                        + "Transfer speed: \t" + this.getSpeed(),
+                "Remote host properties", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
      * The connection time
-     * 
+     *
      * @return The time connected
      */
     private String getDuration() {
@@ -60,7 +68,7 @@ public class ConnectionProperties implements Serializable {
 
     /**
      * Convert to proper size
-     * 
+     *
      * @param size
      *            the size to convert
      * @return The size as a string
@@ -71,7 +79,7 @@ public class ConnectionProperties implements Serializable {
 
     /**
      * Fetch the file transfer speed
-     * 
+     *
      * @return The speed
      */
     private String getSpeed() {
@@ -79,27 +87,21 @@ public class ConnectionProperties implements Serializable {
                 FileUtility.BYTES_PER_SECOND);
     }
 
+    public void incReceivedData(final long size) {
+        receivedData += size;
+    }
+
+    public void incSentData(final long size) {
+        sentData += size;
+    }
+
     /**
-     * Display the connection properties
+     * update the information
      */
-    public void display() {
-        refresh();
-        final Dimension size = (Dimension) properties.get("screen.size");
-        JOptionPane.showMessageDialog(null,
-                "Host: \t" + properties.get("host-address") + "\n" +
-
-                "OS: \t" + properties.get("os") + "\n" +
-
-                "User's name: \t" + properties.get("user.name") + "\n" +
-
-                "Screen resolution: \t" + String.valueOf(size.width) + "x"
-                        + String.valueOf(size.height) + "\n" + "Duration: \t"
-                        + getDuration() + "\n\n" + "Sent data: \t"
-                        + getSize(sentData) + "\n" + "Received data: \t"
-                        + getSize(receivedData) + "\n\n"
-                        + "Total data size: \t" + getSize(dataSize) + "\n"
-                        + "Transfer speed: \t" + getSpeed(),
-                "Remote host properties", JOptionPane.INFORMATION_MESSAGE);
+    private void refresh() {
+        duration = previous + System.currentTimeMillis() - startedAt;
+        dataSize = sentData + receivedData;
+        transferSpeed = dataSize * 1000 / duration;
     }
 
 }

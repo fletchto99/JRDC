@@ -1,21 +1,80 @@
 package me.matt.jrdc.gui;
 
-import me.matt.jrdc.client.viewer.Connection;
-import me.matt.jrdc.client.viewer.Viewer;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
+import me.matt.jrdc.client.viewer.Connection;
+import me.matt.jrdc.client.viewer.Viewer;
+
 public class ConnectionFrame extends JFrame {
+
+    public static void close() {
+        if (ConnectionFrame.connection != null) {
+            ConnectionFrame.connection.dispose();
+        }
+        ConnectionFrame.connection = null;
+    }
+
+    public static void create() {
+        if (ConnectionFrame.connection != null) {
+            return;
+        }
+        SwingUtilities
+                .invokeLater(() -> ConnectionFrame.connection = new ConnectionFrame());
+    }
 
     private static final long serialVersionUID = -5369689276669616289L;
 
+    private static ConnectionFrame connection;
+
+    private JLabel addressLabel;
+
+    private JLabel portLabel;
+
+    private JLabel usernameLabel;
+
+    private JLabel passwordLabel;
+
+    private JTextField addressBox;
+    private JTextField portBox;
+    private JTextField usernameBox;
+    private JPasswordField passwordBox;
+    private JButton cancelButton;
+    private JButton connectButon;
+
     private ConnectionFrame() {
-        initComponents();
+        this.initComponents();
+    }
+
+    private void connectAction(final ActionEvent evt) {
+        try {
+            Integer.parseInt(portBox.getText());
+        } catch (final Exception e) {
+            JOptionPane.showMessageDialog(null, "Invalid Port!");
+            return;
+        }
+        ConnectionFrame.close();
+        new Viewer(new Connection(usernameBox.getText(), this.getPassword(),
+                addressBox.getText(), Integer.parseInt(portBox.getText())));
+    }
+
+    private String getPassword() {
+        String password = "";
+        for (final char c : passwordBox.getPassword()) {
+            password += c;
+        }
+        return password;
     }
 
     private void initComponents() {
@@ -30,9 +89,9 @@ public class ConnectionFrame extends JFrame {
         cancelButton = new JButton();
         connectButon = new JButton();
 
-        setResizable(false);
-        setTitle("Connection Settings");
-        final Container contentPane = getContentPane();
+        this.setResizable(false);
+        this.setTitle("Connection Settings");
+        final Container contentPane = this.getContentPane();
         contentPane.setLayout(null);
 
         addressLabel.setText("Address:");
@@ -73,9 +132,9 @@ public class ConnectionFrame extends JFrame {
         connectButon.setBounds(120, 110, 100, 30);
 
         contentPane.setPreferredSize(new Dimension(250, 185));
-        setSize(250, 185);
-        setLocationRelativeTo(getOwner());
-        addWindowListener(new WindowAdapter() {
+        this.setSize(250, 185);
+        this.setLocationRelativeTo(this.getOwner());
+        this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(final WindowEvent evt) {
                 if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
@@ -83,74 +142,13 @@ public class ConnectionFrame extends JFrame {
                 }
             }
         });
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                ConnectionFrame.close();
-            }
-        });
-        connectButon.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                connectAction(evt);
-            }
-        });
-        setVisible(true);
+        cancelButton.addActionListener(evt -> ConnectionFrame.close());
+        connectButon.addActionListener(evt -> ConnectionFrame.this
+                .connectAction(evt));
+        this.setVisible(true);
         portBox.setText("1099");
         addressBox.setText("localhost");
         usernameBox.setText("admin");
         passwordBox.setText("admin");
     }
-
-    private void connectAction(final ActionEvent evt) {
-        try {
-            Integer.parseInt(portBox.getText());
-        } catch (final Exception e) {
-            JOptionPane.showMessageDialog(null, "Invalid Port!");
-            return;
-        }
-        ConnectionFrame.close();
-        new Viewer(new Connection(usernameBox.getText(), getPassword(),
-                addressBox.getText(), Integer.parseInt(portBox.getText())));
-    }
-
-    private String getPassword() {
-        String password = "";
-        for (final char c : passwordBox.getPassword()) {
-            password += c;
-        }
-        return password;
-    }
-
-    public static void create() {
-        if (ConnectionFrame.connection != null) {
-            return;
-        }
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                ConnectionFrame.connection = new ConnectionFrame();
-            }
-        });
-    }
-
-    public static void close() {
-        if (ConnectionFrame.connection != null) {
-            ConnectionFrame.connection.dispose();
-        }
-        ConnectionFrame.connection = null;
-    }
-
-    private static ConnectionFrame connection;
-
-    private JLabel addressLabel;
-    private JLabel portLabel;
-    private JLabel usernameLabel;
-    private JLabel passwordLabel;
-    private JTextField addressBox;
-    private JTextField portBox;
-    private JTextField usernameBox;
-    private JPasswordField passwordBox;
-    private JButton cancelButton;
-    private JButton connectButon;
 }

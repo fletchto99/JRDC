@@ -1,10 +1,10 @@
 package me.matt.jrdc.utilities;
 
+import java.io.File;
+
 import me.matt.jrdc.Configuration;
 import me.matt.jrdc.gui.GUI;
 import me.matt.jrdc.utilities.security.SecureProperties;
-
-import java.io.File;
 
 public class Settings {
 
@@ -21,7 +21,36 @@ public class Settings {
     public Settings() {
         config = new File(Configuration.Paths.getHomeDirectory(),
                 "settings.dat");
-        loadConfig();
+        this.loadConfig();
+    }
+
+    /**
+     * The unencrypted password
+     *
+     * @return The unencrypted password
+     */
+    public String getPassword() {
+        return password != null ? password
+                : Configuration.Constants.defaultPassword;
+    }
+
+    /**
+     * The unencrypted port
+     *
+     * @return The unencrypted port
+     */
+    public int getPort() {
+        return port != -1 ? port : Configuration.Constants.defaultServerPort;
+    }
+
+    /**
+     * The unencrypted username
+     *
+     * @return The unencrypted username
+     */
+    public String getUsername() {
+        return username != null ? username
+                : Configuration.Constants.defaultUsername;
     }
 
     /**
@@ -46,13 +75,27 @@ public class Settings {
                                 "Error");
             }
         } else {
-            saveDefaultSettings();
+            this.saveDefaultSettings();
+        }
+    }
+
+    /**
+     * Save the default username/password combo
+     */
+    public void saveDefaultSettings() {
+        try {
+            config.createNewFile();
+            properties.setProperty("username", this.getUsername());
+            properties.setProperty("password", this.getPassword());
+            properties.setProperty("port", String.valueOf(this.getPort()));
+            properties.store(config, "jrdcSalt");
+        } catch (final Exception e) {
         }
     }
 
     /**
      * Save the settings within the GUI
-     * 
+     *
      * @param gui
      *            The gui to save the settings for
      */
@@ -69,48 +112,5 @@ public class Settings {
                             "There was an error saving your settings! They will be reset upon next start.",
                             "Error");
         }
-    }
-
-    /**
-     * Save the default username/password combo
-     */
-    public void saveDefaultSettings() {
-        try {
-            config.createNewFile();
-            properties.setProperty("username", getUsername());
-            properties.setProperty("password", getPassword());
-            properties.setProperty("port", String.valueOf(getPort()));
-            properties.store(config, "jrdcSalt");
-        } catch (final Exception e) {
-        }
-    }
-
-    /**
-     * The unencrypted password
-     * 
-     * @return The unencrypted password
-     */
-    public String getPassword() {
-        return password != null ? password
-                : Configuration.Constants.defaultPassword;
-    }
-
-    /**
-     * The unencrypted username
-     * 
-     * @return The unencrypted username
-     */
-    public String getUsername() {
-        return username != null ? username
-                : Configuration.Constants.defaultUsername;
-    }
-
-    /**
-     * The unencrypted port
-     * 
-     * @return The unencrypted port
-     */
-    public int getPort() {
-        return port != -1 ? port : Configuration.Constants.defaultServerPort;
     }
 }

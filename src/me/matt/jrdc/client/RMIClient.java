@@ -1,14 +1,14 @@
 package me.matt.jrdc.client;
 
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.Hashtable;
+
 import me.matt.jrdc.Configuration;
 import me.matt.jrdc.client.viewer.Connection;
 import me.matt.jrdc.server.rmi.ServerInterface;
 import me.matt.jrdc.utilities.InetAddrUtility;
 import me.matt.jrdc.utilities.security.SecurityUtility;
-
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.util.Hashtable;
 
 public class RMIClient {
 
@@ -22,7 +22,7 @@ public class RMIClient {
 
     /**
      * Create an instance of the RMI client
-     * 
+     *
      * @param con
      *            The connection information
      * @param properties
@@ -35,27 +35,8 @@ public class RMIClient {
     }
 
     /**
-     * Check if connected to the server
-     * 
-     * @return True if connected; otherwise false
-     */
-    public boolean isConnected() {
-        return connected;
-    }
-
-    /**
-     * Start the RMIClient
-     */
-    public void Start() {
-        connect();
-        if (!connected) {
-            disconnect();
-        }
-    }
-
-    /**
      * Connect to the rmi server
-     * 
+     *
      * @return The index of the viewer, if connected
      */
     public int connect() {
@@ -85,15 +66,6 @@ public class RMIClient {
     }
 
     /**
-     * Fetch the instance of the ServerInterface
-     * 
-     * @return The server interface
-     */
-    public ServerInterface getServer() {
-        return rmiServer;
-    }
-
-    /**
      * Stop the client and disconnect from the server
      */
     public void disconnect() {
@@ -107,5 +79,33 @@ public class RMIClient {
         }
         rmiServer = null;
         registry = null;
+    }
+
+    /**
+     * Fetch the instance of the ServerInterface
+     *
+     * @return The server interface
+     */
+    public ServerInterface getServer() {
+        return rmiServer;
+    }
+
+    /**
+     * Check if connected to the server
+     *
+     * @return True if connected; otherwise false
+     */
+    public boolean isConnected() {
+        return connected;
+    }
+
+    /**
+     * Start the RMIClient
+     */
+    public void Start() {
+        this.connect();
+        if (!connected) {
+            this.disconnect();
+        }
     }
 }

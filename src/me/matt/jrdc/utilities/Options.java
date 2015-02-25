@@ -1,15 +1,15 @@
 package me.matt.jrdc.utilities;
 
-import me.matt.jrdc.Configuration;
-
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Hashtable;
 
+import me.matt.jrdc.Configuration;
+
 public class Options implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 9157341736166269646L;
 
@@ -29,39 +29,39 @@ public class Options implements Serializable {
         this.inetAddress = inetAddress;
     }
 
-    public int getRefreshRate() {
-        return refreshRate;
-    }
-
-    public void setRefreshRate(final int ms) {
-        refreshRate = ms;
-    }
-
-    public InetAddress getInetAddress() {
-        return inetAddress;
-    }
-
-    public void setInetAddress(final InetAddress inetAddress) {
-        this.inetAddress = inetAddress;
-    }
-
-    public void setImageQuality(final double quality) {
-        imageQuality = quality;
-    }
-
-    public double getImageQuality() {
-        return imageQuality;
-    }
-
-    public void setColorQuality(final byte quality) {
-        colorQuality = quality;
-    }
-
     public byte getColorQuality() {
         return colorQuality;
     }
 
     public ConnectionProperties getConnectionProperties() {
         return properties;
+    }
+
+    public double getImageQuality() {
+        return imageQuality;
+    }
+
+    public InetAddress getInetAddress() {
+        return inetAddress;
+    }
+
+    public int getRefreshRate() {
+        return refreshRate;
+    }
+
+    public void setColorQuality(final byte quality) {
+        colorQuality = quality;
+    }
+
+    public void setImageQuality(final double quality) {
+        imageQuality = quality;
+    }
+
+    public void setInetAddress(final InetAddress inetAddress) {
+        this.inetAddress = inetAddress;
+    }
+
+    public void setRefreshRate(final int ms) {
+        refreshRate = ms;
     }
 }

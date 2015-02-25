@@ -1,9 +1,7 @@
 package me.matt.jrdc;
 
-import me.matt.jrdc.utilities.InetAddrUtility;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.PrintWriter;
@@ -11,13 +9,19 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Hashtable;
 
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import me.matt.jrdc.utilities.InetAddrUtility;
+
 public class Configuration {
 
     /**
      * All of the programs constants
-     * 
+     *
      * @author Matt
-     * 
+     *
      */
     public static final class Constants {
         public static final String defaultServerAddress = "127.0.0.1";
@@ -31,14 +35,47 @@ public class Configuration {
         public static final byte cqGray = BufferedImage.TYPE_BYTE_GRAY;
     }
 
-    /**
-     * The programs main server address
-     */
-    public static String server_address = Configuration.Constants.defaultServerAddress;
+    public static class Paths {
+        /**
+         * Windows AppData directory.
+         *
+         * @return The app data directory.
+         */
+        public static String getAppDir() {
+            return System.getenv("APPDATA") + File.separator;
+        }
+
+        /**
+         * The home directory for all of the programs files.
+         *
+         * @return The home directory.
+         */
+        public static String getHomeDirectory() {
+            return Paths.getAppDir() + "JRDC";
+        }
+    }
 
     /**
      * Display an error in a popup box
-     * 
+     *
+     * @param error
+     *            The error to display
+     * @param title
+     *            The box title
+     */
+    public static void displayError(final String error, final String title) {
+        if (error != null) {
+            final JTextArea textArea = new JTextArea(error);
+            final JScrollPane scrollPane = new JScrollPane(textArea);
+            scrollPane.setPreferredSize(new Dimension(600, 200));
+            JOptionPane.showMessageDialog(null, scrollPane, title,
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Display an error in a popup box
+     *
      * @param error
      *            The error to display
      * @param title
@@ -57,26 +94,8 @@ public class Configuration {
     }
 
     /**
-     * Display an error in a popup box
-     * 
-     * @param error
-     *            The error to display
-     * @param title
-     *            The box title
-     */
-    public static void displayError(final String error, final String title) {
-        if (error != null) {
-            final JTextArea textArea = new JTextArea(error);
-            final JScrollPane scrollPane = new JScrollPane(textArea);
-            scrollPane.setPreferredSize(new Dimension(600, 200));
-            JOptionPane.showMessageDialog(null, scrollPane, title,
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    /**
      * Fetch the local systems properties
-     * 
+     *
      * @return The systems local properties.
      */
     public static Hashtable<String, Object> getLocalProperties() {
@@ -94,23 +113,8 @@ public class Configuration {
         return localProperties;
     }
 
-    public static class Paths {
-        /**
-         * Windows AppData directory.
-         * 
-         * @return The app data directory.
-         */
-        public static String getAppDir() {
-            return System.getenv("APPDATA") + File.separator;
-        }
-
-        /**
-         * The home directory for all of the programs files.
-         * 
-         * @return The home directory.
-         */
-        public static String getHomeDirectory() {
-            return Paths.getAppDir() + "JRDC";
-        }
-    }
+    /**
+     * The programs main server address
+     */
+    public static String server_address = Configuration.Constants.defaultServerAddress;
 }

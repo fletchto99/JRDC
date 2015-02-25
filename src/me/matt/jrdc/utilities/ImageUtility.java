@@ -1,20 +1,22 @@
 package me.matt.jrdc.utilities;
 
-import me.matt.jrdc.Configuration;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Iterator;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.Iterator;
+
+import me.matt.jrdc.Configuration;
 
 public class ImageUtility {
-
-    private static ImageWriter writer = null;
-    private static ImageWriteParam param = null;
 
     /**
      * Set default image params
@@ -31,7 +33,7 @@ public class ImageUtility {
 
     /**
      * Reads an image from an input stream
-     * 
+     *
      * @param in
      *            The input stream to read from
      * @return The buffered image
@@ -47,8 +49,43 @@ public class ImageUtility {
     }
 
     /**
+     * Converts an array of bytes into a buffered image
+     *
+     * @param bytes
+     *            The array of bytes
+     * @return The array of bytes as a buffered image
+     * @throws IOException
+     *             the bytes are null
+     */
+    public static BufferedImage toBufferedImage(final byte[] bytes)
+            throws IOException {
+        return ImageUtility.read(new ByteArrayInputStream(bytes));
+    }
+
+    /**
+     * Converts a buffered image to an array of bytes
+     *
+     * @param image
+     *            The image to convert
+     * @param quality
+     *            The quality of the image
+     * @return The image as an array of bytes.
+     */
+    public static byte[] toByteArray(final BufferedImage image,
+            final double quality) {
+        try {
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageUtility.write(image, (float) quality, out); // write with compression
+            return out.toByteArray();
+        } catch (final IOException e) {
+            Configuration.displayError(e, "Error");
+            return new byte[] {};
+        }
+    }
+
+    /**
      * Writes an image to a stream
-     * 
+     *
      * @param image
      *            The image to write
      * @param quality
@@ -68,38 +105,7 @@ public class ImageUtility {
         ios.close();
     }
 
-    /**
-     * Converts a buffered image to an array of bytes
-     * 
-     * @param image
-     *            The image to convert
-     * @param quality
-     *            The quality of the image
-     * @return The image as an array of bytes.
-     */
-    public static byte[] toByteArray(final BufferedImage image,
-            final double quality) {
-        try {
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ImageUtility.write(image, (float) quality, out);       // write with compression
-            return out.toByteArray();
-        } catch (final IOException e) {
-            Configuration.displayError(e, "Error");
-            return new byte[] {};
-        }
-    }
+    private static ImageWriter writer = null;
 
-    /**
-     * Converts an array of bytes into a buffered image
-     * 
-     * @param bytes
-     *            The array of bytes
-     * @return The array of bytes as a buffered image
-     * @throws IOException
-     *             the bytes are null
-     */
-    public static BufferedImage toBufferedImage(final byte[] bytes)
-            throws IOException {
-        return ImageUtility.read(new ByteArrayInputStream(bytes));
-    }
+    private static ImageWriteParam param = null;
 }

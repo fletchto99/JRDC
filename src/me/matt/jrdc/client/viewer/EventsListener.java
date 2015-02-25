@@ -1,9 +1,14 @@
 package me.matt.jrdc.client.viewer;
 
-import me.matt.jrdc.gui.ScreenPlayer;
-
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+
+import me.matt.jrdc.gui.ScreenPlayer;
 
 public class EventsListener {
 
@@ -19,7 +24,7 @@ public class EventsListener {
 
     /**
      * Add the adapters to listen for events
-     * 
+     *
      * @param recorder
      *            The parent screen display
      */
@@ -38,21 +43,16 @@ public class EventsListener {
             }
         };
 
-        mouseWheelListener = new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(final MouseWheelEvent e) {
-                mouseEvents.add(e);
-            }
-        };
+        mouseWheelListener = e -> mouseEvents.add(e);
 
         mouseMotionAdapter = new MouseMotionAdapter() {
             @Override
-            public void mouseMoved(final MouseEvent e) {
+            public void mouseDragged(final MouseEvent e) {
                 mouseEvents.add(e);
             }
 
             @Override
-            public void mouseDragged(final MouseEvent e) {
+            public void mouseMoved(final MouseEvent e) {
                 mouseEvents.add(e);
             }
         };
@@ -70,15 +70,14 @@ public class EventsListener {
         };
     }
 
-    public ArrayList<MouseEvent> getMouseEvents() {
-        ArrayList<MouseEvent> events = new ArrayList<MouseEvent>();
-
-        synchronized (mouseEvents) {
-            events = mouseEvents;
-            mouseEvents = new ArrayList<MouseEvent>();
-        }
-
-        return events;
+    /**
+     * Add the adapters to listen for events
+     */
+    public void addAdapters() {
+        player.addKeyListener(keyAdapter);
+        player.addMouseWheelListener(mouseWheelListener);
+        player.addMouseMotionListener(mouseMotionAdapter);
+        player.addMouseListener(mouseAdapter);
     }
 
     public ArrayList<KeyEvent> getKeyEvents() {
@@ -92,14 +91,15 @@ public class EventsListener {
         return events;
     }
 
-    /**
-     * Add the adapters to listen for events
-     */
-    public void addAdapters() {
-        player.addKeyListener(keyAdapter);
-        player.addMouseWheelListener(mouseWheelListener);
-        player.addMouseMotionListener(mouseMotionAdapter);
-        player.addMouseListener(mouseAdapter);
+    public ArrayList<MouseEvent> getMouseEvents() {
+        ArrayList<MouseEvent> events = new ArrayList<MouseEvent>();
+
+        synchronized (mouseEvents) {
+            events = mouseEvents;
+            mouseEvents = new ArrayList<MouseEvent>();
+        }
+
+        return events;
     }
 
     /**

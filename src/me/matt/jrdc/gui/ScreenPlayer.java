@@ -1,23 +1,25 @@
 package me.matt.jrdc.gui;
 
-import me.matt.jrdc.utilities.ImageUtility;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
+import javax.swing.JPanel;
+
+import me.matt.jrdc.utilities.ImageUtility;
 
 public class ScreenPlayer extends JPanel {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6629820882800698921L;
 
     private BufferedImage screenImage = null;
 
     public ScreenPlayer() {
-        setFocusable(true);
+        this.setFocusable(true);
     }
 
     @Override
@@ -30,7 +32,7 @@ public class ScreenPlayer extends JPanel {
 
     /**
      * Update the screen with the new image
-     * 
+     *
      * @param data
      *            The bytes of the image
      * @throws IOException
@@ -40,9 +42,9 @@ public class ScreenPlayer extends JPanel {
         screenImage = ImageUtility.toBufferedImage(data);
         final Dimension dimension = new Dimension(screenImage.getWidth(),
                 screenImage.getHeight());
-        setSize(dimension);
-        setPreferredSize(dimension);
-        repaint();
+        this.setSize(dimension);
+        this.setPreferredSize(dimension);
+        this.repaint();
     }
 
 }

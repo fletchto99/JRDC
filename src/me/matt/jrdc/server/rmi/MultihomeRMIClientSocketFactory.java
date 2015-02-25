@@ -1,7 +1,5 @@
 package me.matt.jrdc.server.rmi;
 
-import me.matt.jrdc.Configuration;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetSocketAddress;
@@ -17,12 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import me.matt.jrdc.Configuration;
+
 /**
- * 
+ *
  * Taken From: http://weblogs.java.net/blog/emcmanus/archive/2006/12/multihomed_comp.html
- * 
+ *
  * Used to bind the RMI server to multiple local ip's (for example wifi address + ethernet address)
- * 
+ *
  */
 public class MultihomeRMIClientSocketFactory implements RMIClientSocketFactory,
         Serializable {
@@ -42,7 +42,7 @@ public class MultihomeRMIClientSocketFactory implements RMIClientSocketFactory,
 
         if (hosts.length < 2) {
             Configuration.server_address = hostString;
-            return factory().createSocket(hostString, port);
+            return this.factory().createSocket(hostString, port);
         }
 
         final List<IOException> exceptions = new ArrayList<IOException>();
@@ -56,13 +56,12 @@ public class MultihomeRMIClientSocketFactory implements RMIClientSocketFactory,
         }
         SocketChannel connectedChannel = null;
 
-        connect:
-        while (true) {
+        connect: while (true) {
             if (selector.keys().isEmpty()) {
                 throw new IOException("Connection failed for " + hostString
                         + ": " + exceptions);
             }
-            selector.select(2000);  // you can add a timeout parameter in millseconds
+            selector.select(2000); // you can add a timeout parameter in millseconds
             final Set<SelectionKey> keys = selector.selectedKeys();
             if (keys.isEmpty()) {
                 throw new IOException("Selection keys unexpectedly empty for "
@@ -98,7 +97,16 @@ public class MultihomeRMIClientSocketFactory implements RMIClientSocketFactory,
         hostString = socket.getInetAddress().getHostAddress();
         socket.close();
         Configuration.server_address = hostString;
-        return factory().createSocket(hostString, port);
+        return this.factory().createSocket(hostString, port);
+    }
+
+    @Override
+    public boolean equals(final Object x) {
+        if (x.getClass() != this.getClass()) {
+            return false;
+        }
+        final MultihomeRMIClientSocketFactory f = (MultihomeRMIClientSocketFactory) x;
+        return factory == null ? f.factory == null : factory.equals(f.factory);
     }
 
     private RMIClientSocketFactory factory() {
@@ -113,17 +121,8 @@ public class MultihomeRMIClientSocketFactory implements RMIClientSocketFactory,
     }
 
     @Override
-    public boolean equals(final Object x) {
-        if (x.getClass() != this.getClass()) {
-            return false;
-        }
-        final MultihomeRMIClientSocketFactory f = (MultihomeRMIClientSocketFactory) x;
-        return factory == null ? f.factory == null : factory.equals(f.factory);
-    }
-
-    @Override
     public int hashCode() {
-        int h = getClass().hashCode();
+        int h = this.getClass().hashCode();
         if (factory != null) {
             h += factory.hashCode();
         }

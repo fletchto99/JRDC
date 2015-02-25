@@ -1,16 +1,24 @@
 package me.matt.jrdc.utilities;
 
-import me.matt.jrdc.Configuration;
-
-import java.net.*;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import me.matt.jrdc.Configuration;
+
 public class InetAddrUtility {
+
+    public static void clearDefaultAdr() {
+        System.getProperties().remove("java.rmi.server.hostname");
+    }
 
     /**
      * Get the localhost
-     * 
+     *
      * @return localhost
      */
     public static InetAddress getLocalHost() {
@@ -24,7 +32,7 @@ public class InetAddrUtility {
 
     /**
      * Fetch all local IP addresses across all network interfaces
-     * 
+     *
      * @return All local ip addresses for the current machine
      */
     public static String[] getLocalIPAdresses() {
@@ -59,9 +67,5 @@ public class InetAddrUtility {
     // Java RMI properties
     public static void setDefaultAdr(final String address) {
         System.setProperty("java.rmi.server.hostname", address);
-    }
-
-    public static void clearDefaultAdr() {
-        System.getProperties().remove("java.rmi.server.hostname");
     }
 }

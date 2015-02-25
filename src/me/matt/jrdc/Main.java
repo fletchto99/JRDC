@@ -17,38 +17,6 @@ import me.matt.jrdc.utilities.Settings;
 
 public class Main {
 
-    // for private use only
-    private static GUI main;
-    private static Settings settings;
-
-    /**
-     * Initilize the application
-     * 
-     * @param args
-     */
-    public static void main(final String args[]) {
-        ImageUtility.init();
-        InetAddrUtility.clearDefaultAdr();
-        final File dir = new File(Paths.getHomeDirectory());
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        Main.settings = new Settings();
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    UIManager.setLookAndFeel(UIManager
-                            .getSystemLookAndFeelClassName());
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
-                Main.main = new GUI();
-                Main.main.setSettings(Main.settings);
-            }
-        });
-    }
-
     /**
      * Kills the application
      */
@@ -71,4 +39,34 @@ public class Main {
             System.exit(0);
         }
     }
+
+    /**
+     * Initilize the application
+     *
+     * @param args
+     */
+    public static void main(final String args[]) {
+        ImageUtility.init();
+        InetAddrUtility.clearDefaultAdr();
+        final File dir = new File(Paths.getHomeDirectory());
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        Main.settings = new Settings();
+        SwingUtilities.invokeLater(() -> {
+            try {
+                UIManager.setLookAndFeel(UIManager
+                        .getSystemLookAndFeelClassName());
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+            Main.main = new GUI();
+            Main.main.setSettings(Main.settings);
+        });
+    }
+
+    // for private use only
+    private static GUI main;
+
+    private static Settings settings;
 }

@@ -1,22 +1,103 @@
 package me.matt.jrdc.gui;
 
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.WindowConstants;
+
 import me.matt.jrdc.Configuration;
 import me.matt.jrdc.client.viewer.ScreenDisplay;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-
 public class ViewerGUI extends JFrame {
 
-    private static final long serialVersionUID = -4815895420008072546L;
+    public static void kill() {
+        if (ViewerGUI.recorder != null) {
+            ViewerGUI.recorder.terminate();
+        }
+    }
 
+    private static final long serialVersionUID = -4815895420008072546L;
     private static ScreenDisplay recorder;
+
     private boolean fullScreenMode = false;
+
+    private JMenuBar menuBar;
+
+    private JMenu fileMenu;
+
+    private JMenuItem exitButton;
+
+    private JMenu qualityMenu;
+
+    private JMenuItem highestButton;
+
+    private JMenuItem highButton;
+
+    private JMenuItem mediumButton;
+    private JMenuItem lowButton;
+    private JMenu togglesMenu;
+    private JCheckBoxMenuItem fullscreenToggle;
+    private JCheckBoxMenuItem controlToggle;
+    private JMenu refreshMenu;
+    private JMenuItem fastestButton;
+    private JMenuItem fastButton;
+    private JMenuItem normalButton;
+    private JMenuItem slowButton;
+    private JMenu helpMenu;
+    private JMenuItem sessionButton;
+    private JScrollPane scrollPane;
 
     public ViewerGUI(final ScreenDisplay recorder) {
         ViewerGUI.recorder = recorder;
-        initComponents();
+        this.initComponents();
+    }
+
+    public void changeFullScreenMode() {
+        final GraphicsDevice device = this.getGraphicsConfiguration()
+                .getDevice();
+        if (!device.isFullScreenSupported()) {
+            return;
+        }
+
+        fullScreenMode = !fullScreenMode;
+
+        this.dispose();
+        if (fullScreenMode) {
+            this.setUndecorated(true);
+            device.setFullScreenWindow(this);
+            if (!fullscreenToggle.isSelected()) {
+                fullscreenToggle.setSelected(true);
+            }
+        } else {
+            if (fullscreenToggle.isSelected()) {
+                fullscreenToggle.setSelected(false);
+            }
+            this.setUndecorated(false);
+            device.setFullScreenWindow(null);
+        }
+        this.setVisible(true);
+    }
+
+    private void exit() {
+        if (this.isFullScreenMode()) {
+            this.changeFullScreenMode();
+        }
+        if (JOptionPane.showConfirmDialog(null, "Exit Viewer?",
+                "Confirm Dialog", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            ViewerGUI.recorder.terminate();
+        }
     }
 
     private void initComponents() {
@@ -40,9 +121,9 @@ public class ViewerGUI extends JFrame {
         sessionButton = new JMenuItem();
         scrollPane = new JScrollPane();
 
-        final Container contentPane = getContentPane();
+        final Container contentPane = this.getContentPane();
         contentPane.setLayout(null);
-        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
         {
 
@@ -101,58 +182,24 @@ public class ViewerGUI extends JFrame {
             }
             menuBar.add(helpMenu);
         }
-        setJMenuBar(menuBar);
+        this.setJMenuBar(menuBar);
         scrollPane.setViewportView(ViewerGUI.recorder.getScreenPlayer());
-        add(scrollPane);
+        this.add(scrollPane);
 
-        fullscreenToggle.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                changeFullScreenMode();
-            }
-        });
-        fastestButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                ViewerGUI.recorder.getViewerOptions().setRefreshRate(0);
-            }
-        });
-        fastButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                ViewerGUI.recorder.getViewerOptions().setRefreshRate(250);
-            }
-        });
-        normalButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                ViewerGUI.recorder.getViewerOptions().setRefreshRate(500);
-            }
-        });
-        slowButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                ViewerGUI.recorder.getViewerOptions().setRefreshRate(1000);
-            }
-        });
-        controlToggle.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                ViewerGUI.recorder.setViewOnly(!ViewerGUI.recorder.isViewOnly());
-            }
-        });
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                exit();
-            }
-        });
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowDeactivated(final WindowEvent evt) {
-                ViewerGUI.recorder.getEventsListener().removeAdapters();
-            }
-
+        fullscreenToggle.addActionListener(evt -> ViewerGUI.this
+                .changeFullScreenMode());
+        fastestButton.addActionListener(evt -> ViewerGUI.recorder
+                .getViewerOptions().setRefreshRate(0));
+        fastButton.addActionListener(evt -> ViewerGUI.recorder
+                .getViewerOptions().setRefreshRate(250));
+        normalButton.addActionListener(evt -> ViewerGUI.recorder
+                .getViewerOptions().setRefreshRate(500));
+        slowButton.addActionListener(evt -> ViewerGUI.recorder
+                .getViewerOptions().setRefreshRate(1000));
+        controlToggle.addActionListener(e -> ViewerGUI.recorder
+                .setViewOnly(!ViewerGUI.recorder.isViewOnly()));
+        exitButton.addActionListener(e -> ViewerGUI.this.exit());
+        this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowActivated(final java.awt.event.WindowEvent evt) {
                 if (!ViewerGUI.recorder.isViewOnly()) {
@@ -161,7 +208,14 @@ public class ViewerGUI extends JFrame {
             }
 
             @Override
-            public void windowIconified(final WindowEvent evt) {
+            public void windowClosing(final java.awt.event.WindowEvent evt) {
+                if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
+                    ViewerGUI.this.exit();
+                }
+            }
+
+            @Override
+            public void windowDeactivated(final WindowEvent evt) {
                 ViewerGUI.recorder.getEventsListener().removeAdapters();
             }
 
@@ -171,127 +225,69 @@ public class ViewerGUI extends JFrame {
             }
 
             @Override
-            public void windowClosing(final java.awt.event.WindowEvent evt) {
-                if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
-                    exit();
-                }
+            public void windowIconified(final WindowEvent evt) {
+                ViewerGUI.recorder.getEventsListener().removeAdapters();
             }
         });
-        sessionButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                if (isFullScreenMode()) {
-                    changeFullScreenMode();
-                }
-                ViewerGUI.recorder.getViewer().displayConnectionProperties();
+        sessionButton.addActionListener(e -> {
+            if (ViewerGUI.this.isFullScreenMode()) {
+                ViewerGUI.this.changeFullScreenMode();
             }
-
+            ViewerGUI.recorder.getViewer().displayConnectionProperties();
         });
-        highestButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                setQuality(0);
-            }
-
-        });
-        highButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                setQuality(1);
-            }
-
-        });
-        mediumButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                setQuality(2);
-            }
-
-        });
-        lowButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                setQuality(3);
-            }
-
-        });
-        addComponentListener(new ComponentAdapter() {
+        highestButton.addActionListener(e -> ViewerGUI.this.setQuality(0));
+        highButton.addActionListener(e -> ViewerGUI.this.setQuality(1));
+        mediumButton.addActionListener(e -> ViewerGUI.this.setQuality(2));
+        lowButton.addActionListener(e -> ViewerGUI.this.setQuality(3));
+        this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(final ComponentEvent e) {
-                if (!isFullScreenMode()) {
-                    scrollPane.setBounds(0, 0, getWidth()
-                            - (int) scrollPane.getVerticalScrollBar()
-                                    .getPreferredSize().getWidth(), getHeight()
-                            - (int) (scrollPane.getHorizontalScrollBar()
-                                    .getPreferredSize().getWidth() + menuBar
-                                    .getPreferredSize().getHeight()) + 10);
+                if (!ViewerGUI.this.isFullScreenMode()) {
+                    scrollPane.setBounds(
+                            0,
+                            0,
+                            ViewerGUI.this.getWidth()
+                                    - (int) scrollPane.getVerticalScrollBar()
+                                            .getPreferredSize().getWidth(),
+                            ViewerGUI.this.getHeight()
+                                    - (int) (scrollPane
+                                            .getHorizontalScrollBar()
+                                            .getPreferredSize().getWidth() + menuBar
+                                            .getPreferredSize().getHeight())
+                                    + 10);
                 } else {
-                    scrollPane.setBounds(0, 0, getWidth(), getHeight() - 20);
+                    scrollPane.setBounds(0, 0, ViewerGUI.this.getWidth(),
+                            ViewerGUI.this.getHeight() - 20);
                 }
             }
         });
-        addWindowStateListener(new WindowStateListener() {
-
-            @Override
-            public void windowStateChanged(final WindowEvent e) {
-                if (!isFullScreenMode()) {
-                    scrollPane.setBounds(0, 0, getWidth()
-                            - (int) scrollPane.getVerticalScrollBar()
-                                    .getPreferredSize().getWidth(), getHeight()
-                            - (int) (scrollPane.getHorizontalScrollBar()
-                                    .getPreferredSize().getWidth() + menuBar
-                                    .getPreferredSize().getHeight()) + 10);
-                } else {
-                    scrollPane.setBounds(0, 0, getWidth(), getHeight() - 20);
-                }
+        this.addWindowStateListener(e -> {
+            if (!ViewerGUI.this.isFullScreenMode()) {
+                scrollPane.setBounds(
+                        0,
+                        0,
+                        ViewerGUI.this.getWidth()
+                                - (int) scrollPane.getVerticalScrollBar()
+                                        .getPreferredSize().getWidth(),
+                        ViewerGUI.this.getHeight()
+                                - (int) (scrollPane.getHorizontalScrollBar()
+                                        .getPreferredSize().getWidth() + menuBar
+                                        .getPreferredSize().getHeight()) + 10);
+            } else {
+                scrollPane.setBounds(0, 0, ViewerGUI.this.getWidth(),
+                        ViewerGUI.this.getHeight() - 20);
             }
-
         });
         contentPane.setPreferredSize(new Dimension(925, 680));
-        setMinimumSize(new Dimension(100, 100));
-        setSize(925, 680);
-        setLocationRelativeTo(getOwner());
-        setVisible(true);
-        setTitle("Remote Connection");
-    }
-
-    private void exit() {
-        if (isFullScreenMode()) {
-            changeFullScreenMode();
-        }
-        if (JOptionPane.showConfirmDialog(null, "Exit Viewer?",
-                "Confirm Dialog", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-            ViewerGUI.recorder.terminate();
-        }
+        this.setMinimumSize(new Dimension(100, 100));
+        this.setSize(925, 680);
+        this.setLocationRelativeTo(this.getOwner());
+        this.setVisible(true);
+        this.setTitle("Remote Connection");
     }
 
     public boolean isFullScreenMode() {
         return fullScreenMode;
-    }
-
-    public void changeFullScreenMode() {
-        final GraphicsDevice device = getGraphicsConfiguration().getDevice();
-        if (!device.isFullScreenSupported()) {
-            return;
-        }
-
-        fullScreenMode = !fullScreenMode;
-
-        dispose();
-        if (fullScreenMode) {
-            setUndecorated(true);
-            device.setFullScreenWindow(this);
-            if (!fullscreenToggle.isSelected()) {
-                fullscreenToggle.setSelected(true);
-            }
-        } else {
-            if (fullscreenToggle.isSelected()) {
-                fullscreenToggle.setSelected(false);
-            }
-            setUndecorated(false);
-            device.setFullScreenWindow(null);
-        }
-        setVisible(true);
     }
 
     public void setQuality(final int index) {
@@ -321,31 +317,5 @@ public class ViewerGUI extends JFrame {
                 break;
         }
     }
-
-    public static void kill() {
-        if (ViewerGUI.recorder != null) {
-            ViewerGUI.recorder.terminate();
-        }
-    }
-
-    private JMenuBar menuBar;
-    private JMenu fileMenu;
-    private JMenuItem exitButton;
-    private JMenu qualityMenu;
-    private JMenuItem highestButton;
-    private JMenuItem highButton;
-    private JMenuItem mediumButton;
-    private JMenuItem lowButton;
-    private JMenu togglesMenu;
-    private JCheckBoxMenuItem fullscreenToggle;
-    private JCheckBoxMenuItem controlToggle;
-    private JMenu refreshMenu;
-    private JMenuItem fastestButton;
-    private JMenuItem fastButton;
-    private JMenuItem normalButton;
-    private JMenuItem slowButton;
-    private JMenu helpMenu;
-    private JMenuItem sessionButton;
-    private JScrollPane scrollPane;
 
 }

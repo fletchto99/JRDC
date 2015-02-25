@@ -8,7 +8,7 @@ public class Connection {
 
     /**
      * Connection wrapper
-     * 
+     *
      * @param username
      *            The username
      * @param password
@@ -26,19 +26,19 @@ public class Connection {
         this.port = port;
     }
 
-    public String getUsername() {
-        return username;
+    public String getAddress() {
+        return address;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
     public int getPort() {
         return port;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

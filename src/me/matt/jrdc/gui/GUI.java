@@ -1,31 +1,139 @@
 package me.matt.jrdc.gui;
 
-import me.matt.jrdc.Main;
-import me.matt.jrdc.server.Server;
-import me.matt.jrdc.utilities.Settings;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.InetAddress;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.event.ChangeEvent;
+
+import me.matt.jrdc.Main;
+import me.matt.jrdc.server.Server;
+import me.matt.jrdc.utilities.Settings;
+
 public class GUI extends JFrame {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5442244796182531051L;
     DefaultListModel<InetAddress> listModel = new DefaultListModel<InetAddress>();
     Hashtable<Integer, Integer> viewerKeys;
 
+    private JTabbedPane tabbedPane;
+
+    private JPanel mainPanel;
+
+    private JButton startButton;
+
+    private JButton connectButton;
+
+    private JButton exitButton;
+
+    private JScrollPane scrollPane2;
+
+    private JTextPane statusArea;
+
+    private JPanel connectPanel;
+
+    private JButton kickButton;
+
+    private JButton informationButton;
+
+    private JButton refreshButton;
+
+    private JButton kickAllButton;
+
+    private JScrollPane scrollPane3;
+
+    private JList<InetAddress> connectionsList;
+
+    private JPanel settingsPanel;
+
+    private JTextField usernameBox;
+
+    private JLabel usernameLabel;
+    private JLabel passwordLabel;
+    private JPasswordField passwordBox;
+    private JLabel authLabel;
+    private JLabel portLabel;
+    private JTextField portBox;
+
     public GUI() {
-        initComponents();
+        this.initComponents();
+    }
+
+    private void connectAction(final ActionEvent evt) {
+        ConnectionFrame.create();
+    }
+
+    private void disconnectAllViewersAction(final ActionEvent evt) {
+        if (viewerKeys.size() == 0) {
+            return;
+        }
+        if (JOptionPane.showConfirmDialog(null, "Disconnect viewers ? ",
+                "Confirm Dialog", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE) == JOptionPane.CANCEL_OPTION) {
+            return;
+        }
+        Server.disconnectAllViewers();
+        this.updateList();
+    }
+
+    private void disconnectViewerAction(final ActionEvent evt) {
+        final int index = connectionsList.getSelectedIndex();
+        if (index == -1) {
+            return;
+        }
+        final InetAddress inetAddress = connectionsList.getSelectedValue();
+
+        if (JOptionPane.showConfirmDialog(this,
+                "Disconnect " + inetAddress.toString() + " ? ",
+                "Confirm Dialog", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE) == JOptionPane.CANCEL_OPTION) {
+            return;
+        }
+
+        Server.removeViewer(viewerKeys.get(index));
+        this.updateList();
+    }
+
+    private void exitAction(final ActionEvent evt) {
+        Main.kill();
+    }
+
+    public String getPassword() {
+        String password = "";
+        for (final char c : passwordBox.getPassword()) {
+            password += c;
+        }
+        return password;
+    }
+
+    public int getPort() {
+        return Integer.parseInt(portBox.getText());
+    }
+
+    public String getUsername() {
+        return usernameBox.getText();
     }
 
     private void initComponents() {
@@ -52,9 +160,9 @@ public class GUI extends JFrame {
         portLabel = new JLabel();
         portBox = new JTextField();
 
-        setTitle("Home - Java Remote Desktop");
-        setResizable(false);
-        final Container contentPane = getContentPane();
+        this.setTitle("Home - Java Remote Desktop");
+        this.setResizable(false);
+        final Container contentPane = this.getContentPane();
         contentPane.setLayout(null);
         {
             {
@@ -147,7 +255,7 @@ public class GUI extends JFrame {
             tabbedPane.addTab("Settings", settingsPanel);
         }
 
-        addWindowListener(new WindowAdapter() {
+        this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(final WindowEvent evt) {
                 if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
@@ -156,82 +264,44 @@ public class GUI extends JFrame {
             }
         });
 
-        tabbedPane.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(final ChangeEvent evt) {
-                jTabbedPaneStateChanged(evt);
-            }
-        });
+        tabbedPane.addChangeListener(evt -> GUI.this
+                .jTabbedPaneStateChanged(evt));
 
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                exitAction(evt);
-            }
-        });
+        exitButton.addActionListener(evt -> GUI.this.exitAction(evt));
 
-        connectButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                connectAction(evt);
-            }
-        });
+        connectButton.addActionListener(evt -> GUI.this.connectAction(evt));
 
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                serverAction(evt);
-            }
-        });
+        startButton.addActionListener(evt -> GUI.this.serverAction(evt));
 
-        kickButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                disconnectViewerAction(evt);
-            }
-        });
+        kickButton.addActionListener(evt -> GUI.this
+                .disconnectViewerAction(evt));
 
-        kickAllButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                disconnectAllViewersAction(evt);
-            }
-        });
+        kickAllButton.addActionListener(evt -> GUI.this
+                .disconnectAllViewersAction(evt));
 
-        informationButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                viewerPropertiesAction(evt);
-            }
-        });
+        informationButton.addActionListener(evt -> GUI.this
+                .viewerPropertiesAction(evt));
 
-        refreshButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                refreshAction(evt);
-            }
-        });
+        refreshButton.addActionListener(evt -> GUI.this.refreshAction(evt));
 
         contentPane.add(tabbedPane);
         tabbedPane.setBounds(0, 0, 350, 260);
 
         contentPane.setPreferredSize(new Dimension(355, 285));
-        setSize(355, 285);
-        setLocationRelativeTo(getOwner());
-        updateList();
-        updateStatus();
-        setVisible(true);
-    }
-
-    public void setSettings(final Settings s) {
-        usernameBox.setText(s.getUsername());
-        passwordBox.setText(s.getPassword());
-        portBox.setText(String.valueOf(s.getPort()));
+        this.setSize(355, 285);
+        this.setLocationRelativeTo(this.getOwner());
+        this.updateList();
+        this.updateStatus();
+        this.setVisible(true);
     }
 
     private void jTabbedPaneStateChanged(final ChangeEvent evt) {
-        setTitle(tabbedPane.getTitleAt(tabbedPane.getSelectedIndex())
+        this.setTitle(tabbedPane.getTitleAt(tabbedPane.getSelectedIndex())
                 + " - Java Remote Desktop");
+    }
+
+    private void refreshAction(final ActionEvent evt) {
+        this.updateList();
     }
 
     private void serverAction(final ActionEvent evt) {
@@ -240,84 +310,13 @@ public class GUI extends JFrame {
         } else {
             new Server(this);
         }
-        updateStatus();
+        this.updateStatus();
     }
 
-    private void connectAction(final ActionEvent evt) {
-        ConnectionFrame.create();
-    }
-
-    private void exitAction(final ActionEvent evt) {
-        Main.kill();
-    }
-
-    public void updateStatus() {
-        if (Server.isRunning()) {
-            statusArea.setText("Running.");
-            startButton.setText("Stop");
-        } else {
-            statusArea.setText("Server not running.");
-            startButton.setText("Start");
-        }
-    }
-
-    public String getPassword() {
-        String password = "";
-        for (final char c : passwordBox.getPassword()) {
-            password += c;
-        }
-        return password;
-    }
-
-    public String getUsername() {
-        return usernameBox.getText();
-    }
-
-    public int getPort() {
-        return Integer.parseInt(portBox.getText());
-    }
-
-    private void disconnectAllViewersAction(final ActionEvent evt) {
-        if (viewerKeys.size() == 0) {
-            return;
-        }
-        if (JOptionPane.showConfirmDialog(null, "Disconnect viewers ? ",
-                "Confirm Dialog", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE) == JOptionPane.CANCEL_OPTION) {
-            return;
-        }
-        Server.disconnectAllViewers();
-        updateList();
-    }
-
-    private void refreshAction(final ActionEvent evt) {
-        updateList();
-    }
-
-    private void disconnectViewerAction(final ActionEvent evt) {
-        final int index = connectionsList.getSelectedIndex();
-        if (index == -1) {
-            return;
-        }
-        final InetAddress inetAddress = connectionsList.getSelectedValue();
-
-        if (JOptionPane.showConfirmDialog(this,
-                "Disconnect " + inetAddress.toString() + " ? ",
-                "Confirm Dialog", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE) == JOptionPane.CANCEL_OPTION) {
-            return;
-        }
-
-        Server.removeViewer(viewerKeys.get(index));
-        updateList();
-    }
-
-    private void viewerPropertiesAction(final ActionEvent evt) {
-        final int index = connectionsList.getSelectedIndex();
-        if (index == -1) {
-            return;
-        }
-        Server.getViewerConnectionProperties(index).display();
+    public void setSettings(final Settings s) {
+        usernameBox.setText(s.getUsername());
+        passwordBox.setText(s.getPassword());
+        portBox.setText(String.valueOf(s.getPort()));
     }
 
     public void updateList() {
@@ -336,26 +335,21 @@ public class GUI extends JFrame {
         }
     }
 
-    private JTabbedPane tabbedPane;
-    private JPanel mainPanel;
-    private JButton startButton;
-    private JButton connectButton;
-    private JButton exitButton;
-    private JScrollPane scrollPane2;
-    private JTextPane statusArea;
-    private JPanel connectPanel;
-    private JButton kickButton;
-    private JButton informationButton;
-    private JButton refreshButton;
-    private JButton kickAllButton;
-    private JScrollPane scrollPane3;
-    private JList<InetAddress> connectionsList;
-    private JPanel settingsPanel;
-    private JTextField usernameBox;
-    private JLabel usernameLabel;
-    private JLabel passwordLabel;
-    private JPasswordField passwordBox;
-    private JLabel authLabel;
-    private JLabel portLabel;
-    private JTextField portBox;
+    public void updateStatus() {
+        if (Server.isRunning()) {
+            statusArea.setText("Running.");
+            startButton.setText("Stop");
+        } else {
+            statusArea.setText("Server not running.");
+            startButton.setText("Start");
+        }
+    }
+
+    private void viewerPropertiesAction(final ActionEvent evt) {
+        final int index = connectionsList.getSelectedIndex();
+        if (index == -1) {
+            return;
+        }
+        Server.getViewerConnectionProperties(index).display();
+    }
 }

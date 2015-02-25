@@ -1,28 +1,96 @@
 package me.matt.jrdc.utilities.security;
 
-import me.matt.jrdc.utilities.security.exception.DecryptionException;
-import me.matt.jrdc.utilities.security.exception.EncryptionException;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+
+import me.matt.jrdc.utilities.security.exception.DecryptionException;
+import me.matt.jrdc.utilities.security.exception.EncryptionException;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 public class SecurityUtility {
-    private static final String KEY_ALGORITHM = "AES";
-    private static final String CIPHER_TRANSFORMATION = "AES/CBC/PKCS5Padding";
-    private static final byte[] KEY_VALUE = new byte[] { 'T', 'h', 'i', 's',
-            'I', 's', 'A', 'S', 'e', 'c', 'r', 'e', 't', 'K', 'e', 'y' };
-    private static final String SALT = "$1%Ad#56IyqGh7p*";
+    /**
+     *
+     * @param text
+     *            The input to decrypt
+     * @param salt
+     *            The salt
+     * @param iterations
+     *            The amount of iterations
+     * @return The decrypted text
+     * @throws Exception
+     *             Error decrypting the input
+     */
+    public static String decrypt(final String text, final String salt,
+            final int iterations) throws Exception {
+        final BASE64Decoder decoder = new BASE64Decoder();
+        final IvParameterSpec iv = new IvParameterSpec(new byte[16]);
+        final Key key = SecurityUtility.generateKey(salt);
+        final Cipher cipher = Cipher
+                .getInstance(SecurityUtility.CIPHER_TRANSFORMATION);
+        cipher.init(Cipher.DECRYPT_MODE, key, iv);
+
+        String current = text;
+        String decryption = null;
+        if (iterations < 1) {
+            throw new DecryptionException(
+                    "Invalid amount of iterations. Must be > 1");
+        }
+        for (int i = 0; i < iterations; i++) {
+            byte[] passwordBytes = decoder.decodeBuffer(current);
+            passwordBytes = cipher.doFinal(passwordBytes);
+            current = new String(passwordBytes, "UTF-8").substring(salt
+                    .length());
+            decryption = current;
+        }
+        return decryption;
+
+    }
+
+    /**
+     *
+     * @param text
+     *            The input to encrypt
+     * @param salt
+     *            The salt
+     * @param iterations
+     *            The amount of iterations
+     * @return The encrypted text
+     * @throws Exception
+     *             Error decrypting the input
+     */
+    public static String encrypt(final String text, final String salt,
+            final int iterations) throws Exception {
+        final BASE64Encoder encoder = new BASE64Encoder();
+        final IvParameterSpec iv = new IvParameterSpec(new byte[16]);
+        final Key key = SecurityUtility.generateKey(salt);
+        final Cipher cipher = Cipher
+                .getInstance(SecurityUtility.CIPHER_TRANSFORMATION);
+        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+
+        String current = null;
+        String encryption = text;
+        if (iterations < 1) {
+            throw new EncryptionException(
+                    "Invalid amount of iterations. Must be > 1");
+        }
+        for (int i = 0; i < iterations; i++) {
+            current = encryption;
+            final byte[] cleartext = current.getBytes("UTF-8");
+            encryption = encoder.encode(cipher.doFinal(cleartext));
+        }
+        return encryption;
+    }
 
     /**
      * Generate the key
-     * 
+     *
      * @param salt
      *            Salt value to generate with
      * @return The generated secret key
@@ -37,7 +105,7 @@ public class SecurityUtility {
 
     /**
      * Create a key based on a random salt
-     * 
+     *
      * @param input
      *            The random salt
      * @return The bytes of the key
@@ -76,76 +144,12 @@ public class SecurityUtility {
         return SecurityUtility.KEY_VALUE;
     }
 
-    /**
-     * 
-     * @param text
-     *            The input to encrypt
-     * @param salt
-     *            The salt
-     * @param iterations
-     *            The amount of iterations
-     * @return The encrypted text
-     * @throws Exception
-     *             Error decrypting the input
-     */
-    public static String encrypt(final String text, final String salt,
-            final int iterations) throws Exception {
-        final BASE64Encoder encoder = new BASE64Encoder();
-        final IvParameterSpec iv = new IvParameterSpec(new byte[16]);
-        final Key key = SecurityUtility.generateKey(salt);
-        final Cipher cipher = Cipher
-                .getInstance(SecurityUtility.CIPHER_TRANSFORMATION);
-        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+    private static final String KEY_ALGORITHM = "AES";
 
-        String current = null;
-        String encryption = text;
-        if (iterations < 1) {
-            throw new EncryptionException(
-                    "Invalid amount of iterations. Must be > 1");
-        }
-        for (int i = 0; i < iterations; i++) {
-            current = encryption;
-            final byte[] cleartext = current.getBytes("UTF-8");
-            encryption = encoder.encode(cipher.doFinal(cleartext));
-        }
-        return encryption;
-    }
+    private static final String CIPHER_TRANSFORMATION = "AES/CBC/PKCS5Padding";
 
-    /**
-     * 
-     * @param text
-     *            The input to decrypt
-     * @param salt
-     *            The salt
-     * @param iterations
-     *            The amount of iterations
-     * @return The decrypted text
-     * @throws Exception
-     *             Error decrypting the input
-     */
-    public static String decrypt(final String text, final String salt,
-            final int iterations) throws Exception {
-        final BASE64Decoder decoder = new BASE64Decoder();
-        final IvParameterSpec iv = new IvParameterSpec(new byte[16]);
-        final Key key = SecurityUtility.generateKey(salt);
-        final Cipher cipher = Cipher
-                .getInstance(SecurityUtility.CIPHER_TRANSFORMATION);
-        cipher.init(Cipher.DECRYPT_MODE, key, iv);
+    private static final byte[] KEY_VALUE = new byte[] { 'T', 'h', 'i', 's',
+            'I', 's', 'A', 'S', 'e', 'c', 'r', 'e', 't', 'K', 'e', 'y' };
 
-        String current = text;
-        String decryption = null;
-        if (iterations < 1) {
-            throw new DecryptionException(
-                    "Invalid amount of iterations. Must be > 1");
-        }
-        for (int i = 0; i < iterations; i++) {
-            byte[] passwordBytes = decoder.decodeBuffer(current);
-            passwordBytes = cipher.doFinal(passwordBytes);
-            current = new String(passwordBytes, "UTF-8").substring(salt
-                    .length());
-            decryption = current;
-        }
-        return decryption;
-
-    }
+    private static final String SALT = "$1%Ad#56IyqGh7p*";
 }
