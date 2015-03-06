@@ -86,9 +86,11 @@ public class RMIServer {
         try {
             return RMIServer.gui.getPassword()
                     .equals(SecurityUtility.decrypt(password,
-                            "JRDCSECURE123456789", 2))
+                            "JRDCSECURE123456789"))
                     && RMIServer.gui.getUsername().equals(username);
         } catch (final Exception e) {
+            System.out.println("Exception verifying.");
+            e.printStackTrace();
             return false;
         }
     }

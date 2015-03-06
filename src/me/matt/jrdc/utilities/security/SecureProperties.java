@@ -111,7 +111,7 @@ public class SecureProperties {
         String toParse = null;
         try {
             toParse = SecurityUtility.decrypt(new String(bytearray, "UTF-8"),
-                    salt, iterations);
+                    salt);
         } catch (final Exception e) {
             Configuration.displayError(e, "Error");
         }
@@ -158,7 +158,7 @@ public class SecureProperties {
         }
         final FileWriter fw = new FileWriter(file);
         try {
-            fw.write(SecurityUtility.encrypt(toStore, salt, iterations));
+            fw.write(SecurityUtility.encrypt(toStore, salt));
         } catch (final Exception e) {
             Configuration.displayError(e, "Error");
         }

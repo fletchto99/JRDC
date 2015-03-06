@@ -48,7 +48,7 @@ public class RMIClient {
             rmiServer = (ServerInterface) registry.lookup("jrdc");
             index = rmiServer.startViewer(InetAddrUtility.getLocalHost(), con
                     .getUsername(), SecurityUtility.encrypt(con.getPassword(),
-                    "JRDCSECURE123456789", 2), properties);
+                    "JRDCSECURE123456789"), properties);
 
             switch (index) {
                 case -1:
